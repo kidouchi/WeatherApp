@@ -10,6 +10,8 @@ import com.weather.kidouchi.weatherapp.db.models.WeatherLocation;
 
 import java.util.List;
 
+import io.reactivex.Maybe;
+
 @Dao
 public interface WeatherDao {
 
@@ -26,5 +28,5 @@ public interface WeatherDao {
     List<WeatherLocation> getAllLocations();
 
     @Query("SELECT * FROM weatherlocation WHERE location_name LIKE :name LIMIT 1")
-    WeatherLocation findByName(final String name);
+    Maybe<WeatherLocation> findByName(final String name);
 }
