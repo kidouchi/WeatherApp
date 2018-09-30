@@ -1,17 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.MainActivity">
 
-    <Button
-        android:gravity="center_vertical"
-        android:id="@+id/weather_button"
-        android:textAlignment="center"
-        android:text="Get Weather"
-        android:layout_width="200dp"
-        android:layout_height="100dp" />
+    <EditText
+        android:id="@+id/city_name_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_margin"
+        android:hint="City" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/weather_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_margin"
+        android:text="Get Weather"
+        android:textAlignment="center"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/temperature_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_margin"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/location_name_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_margin"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/weather_description_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/general_margin"
+        android:textSize="18sp" />
+
+</LinearLayout>

@@ -2,6 +2,7 @@ package com.weather.kidouchi.weatherapp;
 
 import android.app.Application;
 
+import com.facebook.stetho.Stetho;
 import com.weather.kidouchi.weatherapp.services.ApiRequestInterceptor;
 import com.weather.kidouchi.weatherapp.services.ApiService;
 
@@ -18,6 +19,8 @@ public class WeatherApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        Stetho.initializeWithDefaults(this);
 
         mRetrofit = new Retrofit.Builder()
                 .client(createOkHttpClient())

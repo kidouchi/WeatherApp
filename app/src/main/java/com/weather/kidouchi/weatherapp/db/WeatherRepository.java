@@ -1,19 +1,16 @@
 package com.weather.kidouchi.weatherapp.db;
 
 import android.app.Application;
-import android.os.Parcel;
 
-import com.weather.kidouchi.weatherapp.db.models.WeatherLocation;
+import com.weather.kidouchi.weatherapp.db.models.Weather;
 import com.weather.kidouchi.weatherapp.services.ApiService;
-import com.weather.kidouchi.weatherapp.services.apiresponses.Weather;
+import com.weather.kidouchi.weatherapp.services.apiresponses.Temperature;
+import com.weather.kidouchi.weatherapp.services.apiresponses.WeatherCondition;
+import com.weather.kidouchi.weatherapp.services.apiresponses.WeatherResponse;
 
-import java.util.concurrent.Callable;
-
+import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Response;
 
 public class WeatherRepository {
 
@@ -25,38 +22,38 @@ public class WeatherRepository {
         mAppDatabase = AppDatabase.getInstance(application);
     }
 
-    public void getWeather(final String cityName) {
-        mAppDatabase.weatherDao().findByName(cityName)
-                .isEmpty()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(new Consumer<Boolean>() {
-                    @Override
-                    public void accept(final Boolean isEmpty) throws Exception {
-                        // If empty then cache in DB
-                        if (isEmpty) {
-                            mApiService.weather(cityName)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(Schedulers.io())
-                                    .subscribe(new Consumer<Response<Weather>>() {
-                                        @Override
-                                        public void accept(Response<Weather> weatherResponse) throws Exception {
-                                            final WeatherLocation weatherLocation = new WeatherLocation()
-                                            updateDb(weatherResponse.body());
-                                        }
-                                    });
-                        }
-                    }
-                });
+    public Observable<Weather> getWeather(final String cityName) {
+        return Observable.concat(getWeatherFromDb(cityName), getWeatherFromApi(cityName));
     }
 
-     public void updateDb(final WeatherLocation weatherLocation) {
-        Observable.fromCallable(new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    mAppDatabase.weatherDao().insert(weatherLocation);
-                }
-            }).subscribeOn(Schedulers.io()).observeOn(Schedulers.io()).subscribe();
+    private Observable<Weather> getWeatherFromApi(final String cityName) {
+        return mApiService.weather(cityName)
+                .subscribeOn(Schedulers.io())
+                .map(weatherResponseResponse -> {
+                    final WeatherResponse weatherResponse = weatherResponseResponse.body();
+                    final Temperature temperature = weatherResponse.getTemperature();
+                    final WeatherCondition weatherCondition = weatherResponse.getWeatherConditions().get(0);
+                    return new Weather(weatherResponse.getName(),
+                            weatherCondition.getWeatherCondition(),
+                            weatherCondition.getDescription(),
+                            temperature.getTemperature(),
+                            temperature.getTemperatureMin(),
+                            temperature.getTemperatureMax());
+                })
+                .doOnNext(weather -> updateDb(weather));
+    }
+
+
+     private Observable<Weather> getWeatherFromDb(final String cityName) {
+        return mAppDatabase.weatherDao().findByName(cityName)
+                .toObservable();
      }
+
+    private void updateDb(final Weather weather) {
+        Completable.fromAction(() -> mAppDatabase.weatherDao().insert(weather))
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe();
+    }
 
 }

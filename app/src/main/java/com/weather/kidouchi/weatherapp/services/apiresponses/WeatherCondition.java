@@ -8,7 +8,7 @@ public class WeatherCondition {
     int id;
 
     @SerializedName("main")
-    String main;
+    String weatherCondition;
 
     @SerializedName("description")
     String description;
@@ -20,8 +20,8 @@ public class WeatherCondition {
         return id;
     }
 
-    public String getMain() {
-        return main;
+    public String getWeatherCondition() {
+        return weatherCondition;
     }
 
     public String getDescription() {

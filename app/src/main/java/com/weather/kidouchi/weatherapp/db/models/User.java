@@ -7,10 +7,29 @@ import android.arch.persistence.room.PrimaryKey;
 @Entity
 public class User {
 
-    @PrimaryKey
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @PrimaryKey(autoGenerate = true)
     private int uid;
 
     @ColumnInfo(name = "name")
     String name;
 
+    public User(final String name) {
+        this.name = name;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
