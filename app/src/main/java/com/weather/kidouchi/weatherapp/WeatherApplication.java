@@ -3,6 +3,7 @@ package com.weather.kidouchi.weatherapp;
 import android.app.Application;
 
 import com.facebook.stetho.Stetho;
+import com.weather.kidouchi.weatherapp.db.WeatherRepository;
 import com.weather.kidouchi.weatherapp.services.ApiRequestInterceptor;
 import com.weather.kidouchi.weatherapp.services.ApiService;
 
@@ -38,5 +39,10 @@ public class WeatherApplication extends Application {
         return new OkHttpClient.Builder()
                 .addInterceptor(new ApiRequestInterceptor())
                 .build();
+    }
+
+    public WeatherRepository getWeatherRepository() {
+        // I know we should be using DI like Dagger, but since simple app
+        return new WeatherRepository(this, getApiService());
     }
 }

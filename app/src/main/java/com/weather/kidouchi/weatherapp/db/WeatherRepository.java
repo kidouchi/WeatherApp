@@ -1,6 +1,6 @@
 package com.weather.kidouchi.weatherapp.db;
 
-import android.app.Application;
+import android.content.Context;
 
 import com.weather.kidouchi.weatherapp.db.models.Weather;
 import com.weather.kidouchi.weatherapp.services.ApiService;
@@ -17,9 +17,9 @@ public class WeatherRepository {
     private final ApiService mApiService;
     private final AppDatabase mAppDatabase;
 
-    public WeatherRepository(final Application application, final ApiService apiService) {
+    public WeatherRepository(final Context context, final ApiService apiService) {
         mApiService = apiService;
-        mAppDatabase = AppDatabase.getInstance(application);
+        mAppDatabase = AppDatabase.getInstance(context);
     }
 
     public Observable<Weather> getWeather(final String cityName) {
